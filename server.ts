@@ -1,17 +1,24 @@
 import { umzug } from "./migrations/scripts/umzug";
+import cookieParser from "cookie-parser";
+import logger from "morgan";
 import express = require("express");
 import http from "http";
 import helmet from "helmet/dist";
 import { Router } from "express";
-import { ApiControllers } from "./src/app";
+import { ApiControllers, SessionMiddleware } from "./src/app";
+import * as swaggerDocument from "./swagger.json";
+import swaggerUi from "swagger-ui-express";
 
-const server: express.Application = express();
+const server = express();
 
 export const run = async (): Promise<void> => {
     await umzug.up();
 
+    /** Functional app setups **/
+    server.use(logger("common"));
     server.use(express.json());
-    server.use(express.text());
+    server.use(express.urlencoded({ extended: false }));
+    server.use(cookieParser());
 
     /** Setup middlewares **/
     server.use(
@@ -24,11 +31,13 @@ export const run = async (): Promise<void> => {
         res.header("Access-Control-Allow-Headers", "*");
         next();
     });
+    server.use(SessionMiddleware.session);
 
     /** Setup controllers **/
     const ApiRouter = Router();
     ApiControllers.forEach((controller) => controller.registerRoutes(ApiRouter));
     server.use("/api", ApiRouter);
+    server.use("/swagger", swaggerUi.serve, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
     /** Not found and server error control **/
     server.use((req, res) => {

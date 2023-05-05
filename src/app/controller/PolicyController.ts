@@ -3,6 +3,7 @@ import { RestError } from "../../utils/error";
 import { BaseController, Route } from "./BaseController";
 import { PolicyUseCase } from "../../domain/usecase/PolicyUseCase";
 import { UserUseCase } from "../../domain/usecase/UserUseCase";
+import { SessionMiddleware } from "../middleware/SessionMiddleware";
 
 enum Routes {
     ALL = "/all",
@@ -12,9 +13,15 @@ enum Routes {
 
 export class PolicyController extends BaseController {
     private static readonly baseRoute = "/policy";
-
-    constructor(private readonly policyUseCase: PolicyUseCase, private readonly userUseCase: UserUseCase) {
+    private policyUseCase: PolicyUseCase;
+    private userUseCase: UserUseCase;
+    private sessionMiddleware: SessionMiddleware;
+    constructor(policyUseCase: PolicyUseCase, userUseCase: UserUseCase, sessionMiddleware: SessionMiddleware) {
         super(PolicyController.baseRoute);
+
+        this.sessionMiddleware = sessionMiddleware;
+        this.policyUseCase = policyUseCase;
+        this.userUseCase = userUseCase;
     }
 
     get routes(): Route[] {
@@ -22,13 +29,13 @@ export class PolicyController extends BaseController {
             {
                 method: "get",
                 route: Routes.ALL,
-                middlewares: [],
+                middlewares: [this.sessionMiddleware.isAdmin],
                 execute: this.getAll,
             },
             {
                 method: "get",
                 route: Routes.GET,
-                middlewares: [],
+                middlewares: [this.sessionMiddleware.isAdmin],
                 execute: this.getUserById,
             },
             {
@@ -45,21 +52,15 @@ export class PolicyController extends BaseController {
      */
     private getAll = async (req: Request, res: Response) => {
         try {
-            const { username, email } = req.query;
-            let policies = null;
-            if (username && email){
-                const isAdmin = await this.userUseCase.isAdmin(email.toString()); //TODO: login users & auth middleware
-                if (!isAdmin) res.status(400).json({ status: 401, message: "Unauthorized" });
-                else {
-                    policies = await this.policyUseCase.findByUsername(username.toString());
-                    res.json({
-                        policies: policies,
-                        status: "ok",
-                    });
-                }
-
+            const { username } = req.query;
+            if (username) {
+                const policies = await this.policyUseCase.findByUsername(username.toString());
+                res.json({
+                    policies: policies,
+                    status: "ok",
+                });
             }
-            else res.status(400).json({ status: 400, message: "Identify with your email and present a username" });
+            else res.status(400).json({ status: 400, message: "Present a username" });
         } catch (err) {
             return RestError.manageServerError(res, err);
         }
@@ -70,21 +71,15 @@ export class PolicyController extends BaseController {
      */
     private getUserById = async (req: Request, res: Response) => {
         try {
-            const { id, email } = req.query;
-            let user = null;
-            if (id && email) {
-                const isAdmin = await this.userUseCase.isAdmin(email.toString()); //TODO: login users & auth middleware
-                if (!isAdmin) res.status(400).json({ status: 401, message: "Unauthorized" });
-                else {
-                    user = await this.policyUseCase.findUserById(id.toString());
-                    res.json({
-                        user: user,
-                        status: "ok",
-                    });
-                }
-
+            const { id } = req.query;
+            if (id) {
+                const user = await this.policyUseCase.findUserById(id.toString());
+                res.json({
+                    user: user,
+                    status: "ok",
+                });
             } else {
-                res.status(400).json({ status: 400, message: "Identify with your email and present an id" });
+                res.status(400).json({ status: 400, message: "Present an id" });
             }
         } catch (err) {
             return RestError.manageServerError(res, err);

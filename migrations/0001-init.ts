@@ -77,10 +77,12 @@ const migrationCommandsUp = [
                 name: {
                     type: DataType.STRING,
                     field: "name",
+                    unique: true,
                 },
                 email: {
                     type: DataType.STRING,
                     field: "email",
+                    unique: true,
                 },
                 role: {
                     type: DataType.STRING,

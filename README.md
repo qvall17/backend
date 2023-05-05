@@ -14,8 +14,6 @@ docker-compose up -d
 
 npm run dev
 
-## Seeders
-
-Make a POST request to these endpoints to fill the database:
-#### http://localhost:8080/api/user/seed 
-#### http://localhost:8080/api/policy/seed 
+## Swagger Documentation
+Register with an existing email to get an authorization token
+#### http://localhost:8080/swagger

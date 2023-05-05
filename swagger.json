@@ -1,0 +1,256 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Api Documentation",
+    "description": "",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "definitions": {
+    "User": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "_password": {
+          "type": "string"
+        }
+      }
+    },
+    "Policy": {
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "amountInsured": {
+          "type": "string"
+        },
+        "inceptionDate": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "clientId": {
+          "type": "string"
+        },
+        "installPayment": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "host": "localhost:8080",
+  "tags": [
+    {
+      "name": "User",
+      "description": "Client users in the system"
+    },
+    {
+      "name": "Policy",
+      "description": "Policies in the system"
+    }
+  ],
+  "schemes": ["http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "basePath": "/api",
+
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "description": "Enter a JWT Bearer token",
+      "in": "header",
+      "name": "token"
+    }
+  },
+  "paths": {
+    "/user": {
+      "get": {
+        "tags": ["User"],
+        "summary": "get user by username or id",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "username",
+            "type": "string",
+            "description": "user name"
+          },
+          {
+            "in": "query",
+            "name": "id",
+            "type": "string",
+            "description": "id of the you want to find"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "returns user with the given id or username"
+          },
+          "403": {
+            "description": "user is not authenticated"
+          },
+          "404": {
+            "description": "user not found"
+          }
+        }
+     }
+   },
+    "/user/register": {
+      "post": {
+        "tags": ["User"],
+        "summary": "user register",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Register",
+            "description": "user email, password and confirmPassword",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                },
+                "confirmPassword": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "returns the user and its authorization token"
+          },
+          "404": {
+            "description": "user not found"
+          }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "tags": ["User"],
+        "summary": "user login",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Login",
+            "description": "User email and password to login",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "returns the user and its authorization token"
+          },
+          "404": {
+            "description": "user not found"
+          }
+        }
+      }
+    },
+    "/policy/user": {
+      "get": {
+        "tags": ["Policy"],
+        "summary": "get user from policy number",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "id",
+            "type": "string",
+            "description": "policy number id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "returns the user with the given policy number"
+          },
+          "401": {
+            "description": "user role is not admin"
+          },
+          "403": {
+            "description": "user not authenticated"
+          },
+          "404": {
+            "description": "policy not found"
+          }
+        }
+      }
+    },
+    "/policy/all": {
+      "get": {
+        "tags": ["Policy"],
+        "summary": "get all policies from given user",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "username",
+            "type": "string",
+            "description": "user name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "returns all policies from the given user"
+          },
+          "400": {
+            "description": "returns all policies from the given user"
+          },
+          "401": {
+            "description": "user role is not admin"
+          },
+          "403": {
+            "description": "user not authenticated"
+          },
+          "404": {
+            "description": "user not found"
+          }
+        }
+      }
+    }
+  }
+}
+

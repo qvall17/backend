@@ -13,21 +13,22 @@ export class UserUseCase {
     }
 
     /**
-     * Check user is admin
+     * Find by email
      * @param email
      */
-    async isAdmin(email: string): Promise<boolean> {
-        return this.userRepository.isAdmin(email);
+    async findByEmail(email: string): Promise<User> {
+        return this.userRepository.findByEmail(email);
     }
 
     /**
-     * Check user email exists
+     * Checks if a user match its password
      * @param email
+     * @param plainPassword
      */
-    async isValidUser(email: string): Promise<boolean> {
-        return this.userRepository.isValidUser(email);
+    async checkUserMatchPassword(email: string, plainPassword: string): Promise<boolean> {
+        const user: User = await this.userRepository.findByEmail(email);
+        return this.userRepository.matchPasswordForUser(user, plainPassword);
     }
-
 
     /**
      * Find by username
@@ -35,6 +36,15 @@ export class UserUseCase {
      */
     async findByUsername(username: string): Promise<User> {
         return this.userRepository.findByUsername(username);
+    }
+
+    /**
+     * Change password to user
+     * @param email
+     * @param newPassword
+     */
+    async changePassword(email: string, newPassword: string): Promise<void> {
+        return this.userRepository.changePassword(email, newPassword);
     }
     /**
      * SEED
