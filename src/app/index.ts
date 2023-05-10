@@ -8,7 +8,7 @@ import { SessionMiddleware as SessionMiddlewareClass } from "./middleware/Sessio
 import { PolicyUseCase, UserUseCase } from "../domain";
 
 /** Create Middlewares */
-export const SessionMiddleware = new SessionMiddlewareClass("1234");
+export const SessionMiddleware = new SessionMiddlewareClass(process.env.SECRET);
 
 /** Register Controllers */
 export const ApiControllers: BaseController[] = [
