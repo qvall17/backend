@@ -76,8 +76,8 @@ export class PolicyController extends BaseController {
     /**
      * Create Seed
      */
-    private createSeed = (req: Request, res: Response) => {
-        this.policyUseCase.seed();
+    private createSeed = async (req: Request, res: Response) => {
+        await this.policyUseCase.seed();
         res.json({
             status: "ok",
         });

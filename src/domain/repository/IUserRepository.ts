@@ -6,5 +6,5 @@ export interface IUserRepository {
     findByName(name: string): Promise<User>;
     changePassword(id: string, newPassword: string): Promise<void>;
     matchPasswordForUser(user: User, plainPassword: string): Promise<boolean>;
-    seed(): void;
+    createUser(newUser: User): Promise<User>;
 }

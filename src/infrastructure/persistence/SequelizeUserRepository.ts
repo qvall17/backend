@@ -1,7 +1,6 @@
 import { IUserRepository } from "../../domain/repository/IUserRepository";
 import { UserModel } from "./model/UserModel";
 import { User, UserRole } from "../../domain/entity/User";
-import clients from "../../../seed/clients";
 
 export class SequelizeUserRepository implements IUserRepository {
 
@@ -32,18 +31,22 @@ export class SequelizeUserRepository implements IUserRepository {
     }
 
     async findByEmail(email: string): Promise<User> {
-        const userModel: UserModel = await UserModel.findOne({
+        const userModel = await UserModel.findOne({
             where: { email }
         });
         if (!userModel) return null;
         return this.transformModelToEntity(userModel);
     }
 
-    seed(): void {
-        clients.forEach((client) => {
-            const userModel = new UserModel(client);
-            userModel.save();
+    async createUser(newUser: User): Promise<User> {
+        const userModel = new UserModel({
+            id: newUser.id,
+            name: newUser.name,
+            email: newUser.email,
+            role: newUser.role,
         });
+        await userModel.save();
+        return this.transformModelToEntity(userModel);
     }
 
     private transformModelToEntity(model: UserModel): User {

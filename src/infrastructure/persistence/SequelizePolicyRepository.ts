@@ -19,11 +19,17 @@ export class SequelizePolicyRepository implements IPolicyRepository {
         return policyModels.map(this.transformModelToEntity);
     }
 
-    seed(): void {
-        policies.forEach((policy) => {
-            const policyModel = new PolicyModel(policy);
-            policyModel.save();
+    async createPolicy(newPolicy: Policy): Promise<Policy> {
+        const policyModel = new PolicyModel({
+            id: newPolicy.id,
+            email: newPolicy.email,
+            amountInsured: newPolicy.amountInsured,
+            inceptionDate: newPolicy.inceptionDate,
+            clientId: newPolicy.clientId,
+            installmentPayment: newPolicy.installmentPayment
         });
+        await policyModel.save();
+        return this.transformModelToEntity(policyModel);
     }
 
     private transformModelToEntity(model: PolicyModel): Policy {

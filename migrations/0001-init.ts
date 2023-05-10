@@ -33,7 +33,7 @@ const migrationCommandsUp = [
                     primaryKey: true,
                 },
                 amountInsured: {
-                    type: DataType.STRING,
+                    type: DataType.FLOAT,
                     field: "amountInsured",
                 },
                 inceptionDate: {

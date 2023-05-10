@@ -10,7 +10,7 @@ export class PolicyModel extends Model<PolicyModel> {
     public id: string;
 
     @Column
-    public amountInsured: string;
+    public amountInsured: number;
 
     @Column
     public email: string;

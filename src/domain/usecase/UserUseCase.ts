@@ -1,6 +1,8 @@
 import { IUserRepository } from "../repository/IUserRepository";
 import { User } from "../entity/User";
-import { HttpStatusCode, RestError } from "../../utils/error";
+import { RestError } from "../../utils/error";
+import clients from "../../../seed/clients";
+import { HttpStatusCode } from "../../utils/HttpStatusCode";
 
 export class UserUseCase {
     constructor(private readonly userRepository: IUserRepository) {}
@@ -57,8 +59,10 @@ export class UserUseCase {
     /**
      * SEED
      */
-    seed(): void {
-        return this.userRepository.seed();
+    async seed(): Promise<void> {
+        for (const client of clients as User[]) {
+            await this.userRepository.createUser(client);
+        }
     }
 
 }

@@ -120,8 +120,8 @@ export class UserController extends BaseController {
     /**
      * CREATE SEED
      */
-    private createSeed = (req: Request, res: Response) => {
-        this.userUseCase.seed();
+    private createSeed = async (req: Request, res: Response) => {
+        await this.userUseCase.seed();
         res.json({
             status: "ok",
         });

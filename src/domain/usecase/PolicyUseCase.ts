@@ -2,7 +2,9 @@ import { IPolicyRepository } from "../repository/IPolicyRepository";
 import { Policy } from "../entity/Policy";
 import { IUserRepository } from "../repository/IUserRepository";
 import { User } from "../entity/User";
-import { HttpStatusCode, RestError } from "../../utils/error";
+import { RestError } from "../../utils/error";
+import policies from "../../../seed/policies";
+import { HttpStatusCode } from "../../utils/HttpStatusCode";
 
 export class PolicyUseCase {
     constructor(private readonly policyRepository: IPolicyRepository, private readonly userRepository: IUserRepository) {}
@@ -23,8 +25,10 @@ export class PolicyUseCase {
         else throw new RestError("Policy not found", HttpStatusCode.NOT_FOUND);
     }
 
-    seed(): void {
-        return this.policyRepository.seed();
+    async seed(): Promise<void> {
+        for (const policy of policies as Policy[]) {
+            await this.policyRepository.createPolicy(policy);
+        }
     }
 
 }
