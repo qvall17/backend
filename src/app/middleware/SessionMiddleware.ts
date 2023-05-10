@@ -66,12 +66,9 @@ export class SessionMiddleware {
      */
     public isAdmin = (req: Request, res: Response, next: NextFunction): any => {
         const session: Session = res.locals.session;
-        console.log(session);
         if (!session) {
-            console.log("error forbidden");
             return this.sendForbiddenResponse(res);
         } else if (session.userRole !== UserRole.Admin) {
-            console.log("error unauthorized");
             return this.sendUnauthorizedResponse(res);
         } else {
             next()
