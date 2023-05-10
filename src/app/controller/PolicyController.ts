@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
-import { RestError } from "../../utils/error";
 import { BaseController, Route } from "./BaseController";
 import { PolicyUseCase } from "../../domain/usecase/PolicyUseCase";
 import { UserUseCase } from "../../domain/usecase/UserUseCase";
 import { SessionMiddleware } from "../middleware/SessionMiddleware";
+import { tryCatch } from "../../utils/tryCatch";
+import { PolicyUserRequest } from "./request/PolicyUserRequest";
+import { PoliciesRequest } from "./request/PoliciesRequest";
 
 enum Routes {
     ALL = "/all",
@@ -30,75 +32,54 @@ export class PolicyController extends BaseController {
                 method: "get",
                 route: Routes.ALL,
                 middlewares: [this.sessionMiddleware.isAdmin],
-                execute: this.getAll,
+                execute: tryCatch(this.getAll),
             },
             {
                 method: "get",
                 route: Routes.GET,
                 middlewares: [this.sessionMiddleware.isAdmin],
-                execute: this.getUserById,
+                execute: tryCatch(this.getUserById),
             },
             {
                 method: "post",
                 route: Routes.CREATE,
                 middlewares: [],
-                execute: this.createSeed,
+                execute: tryCatch(this.createSeed),
             },
         ];
     }
 
     /**
-     * GET ALL POLICIES BY USERNAME
+     * GET ALL POLICIES BY NAME
      */
     private getAll = async (req: Request, res: Response) => {
-        try {
-            const { username } = req.query;
-            if (username) {
-                const policies = await this.policyUseCase.findByUsername(username.toString());
-                res.json({
-                    policies: policies,
-                    status: "ok",
-                });
-            }
-            else res.status(400).json({ status: 400, message: "Present a username" });
-        } catch (err) {
-            return RestError.manageServerError(res, err);
-        }
+        const { name } = new PoliciesRequest(req);
+        const policies = await this.policyUseCase.findByName(name.toString());
+        res.json({
+            policies: policies,
+            status: "ok",
+        });
     };
 
     /**
      * GET USER BY POLICY NUMBER
      */
     private getUserById = async (req: Request, res: Response) => {
-        try {
-            const { id } = req.query;
-            if (id) {
-                const user = await this.policyUseCase.findUserById(id.toString());
-                res.json({
-                    user: user,
-                    status: "ok",
-                });
-            } else {
-                res.status(400).json({ status: 400, message: "Present an id" });
-            }
-        } catch (err) {
-            return RestError.manageServerError(res, err);
-        }
+        const { id } = new PolicyUserRequest(req);
+        const user = await this.policyUseCase.findUserById(id.toString());
+        res.json({
+            user: user,
+            status: "ok",
+        });
     };
 
     /**
      * Create Seed
      */
-    private createSeed = async (req: Request, res: Response) => {
-        try {
-            await this.policyUseCase.seed();
-
-            res.json({
-                status: "ok",
-            });
-        } catch (err) {
-            return RestError.manageServerError(res, err);
-        }
+    private createSeed = (req: Request, res: Response) => {
+        this.policyUseCase.seed();
+        res.json({
+            status: "ok",
+        });
     };
-
 }

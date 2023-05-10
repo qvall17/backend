@@ -1,6 +1,6 @@
 import { Request } from "express";
-import { RestError } from "../../../utils/error";
-import { isEmailValid } from "../../../utils/validator";
+import { HttpStatusCode, RestError } from "../../../utils/error";
+import { isEmailValid, isPasswordValid } from "../../../utils/validator";
 
 export class RegisterRequest {
     public newPassword: string;
@@ -17,7 +17,8 @@ export class RegisterRequest {
      * @param confirmPassword
      */
     protected fillPassword(password: string, confirmPassword: string): void {
-        if (password !== confirmPassword) throw new RestError("Passwords don't match", 400);
+        if(!isPasswordValid(password)) throw new RestError("Invalid password", HttpStatusCode.BAD_REQUEST);
+        if (password !== confirmPassword) throw new RestError("Passwords don't match", HttpStatusCode.BAD_REQUEST);
         this.newPassword = password;
     }
 
@@ -25,7 +26,7 @@ export class RegisterRequest {
      * @param email
      */
     protected fillEmail(email: string): void {
-        if (!isEmailValid(email)) throw new RestError("Invalid email", 400);
+        if (!isEmailValid(email)) throw new RestError("Invalid email", HttpStatusCode.BAD_REQUEST);
         this.email = email;
     }
 }

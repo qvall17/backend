@@ -14,3 +14,12 @@ export const containsBadCharactersOrTooLong = (text: string): boolean => {
     // eslint-disable-next-line no-useless-escape
     return !text || !/^([À-ÿ]|[a-z]|[A-Z]|[0-9]|\!|\@|\#|\$|\%|\&|\/|\(|\)|\=|\?|\¿|\¿|\*|\-|\_|\.|\ç|\Ç|\ñ|\Ñ|\+|\ ){1,40}$/g.test(text);
 };
+
+/**
+ * Check password
+ * @param password
+ */
+export const isPasswordValid = (password: string): boolean => {
+    if (!password || containsBadCharactersOrTooLong(password)) return false;
+    return !(!password || password.length < 8 || password.length > 24);
+};

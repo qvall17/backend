@@ -80,7 +80,7 @@
     "/user": {
       "get": {
         "tags": ["User"],
-        "summary": "get user by username or id",
+        "summary": "get user by name or id",
         "security": [
           {
             "Bearer": []
@@ -89,7 +89,7 @@
         "parameters": [
           {
             "in": "query",
-            "name": "username",
+            "name": "name",
             "type": "string",
             "description": "user name"
           },
@@ -102,7 +102,7 @@
         ],
         "responses": {
           "200": {
-            "description": "returns user with the given id or username"
+            "description": "returns user with the given id or name"
           },
           "403": {
             "description": "user is not authenticated"
@@ -227,16 +227,13 @@
         "parameters": [
           {
             "in": "query",
-            "name": "username",
+            "name": "name",
             "type": "string",
             "description": "user name"
           }
         ],
         "responses": {
           "200": {
-            "description": "returns all policies from the given user"
-          },
-          "400": {
             "description": "returns all policies from the given user"
           },
           "401": {

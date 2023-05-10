@@ -1,12 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
-import { User } from "../../domain/entity/User";
+import { User, UserRole } from "../../domain/entity/User";
+import { HttpStatusCode } from "../../utils/error";
 
 interface Session {
     id: string;
     userEmail: string;
     expiration: number;
-    userRole: string;
+    userRole: UserRole;
 }
 
 export class SessionMiddleware {
@@ -65,24 +66,23 @@ export class SessionMiddleware {
      */
     public isAdmin = (req: Request, res: Response, next: NextFunction): any => {
         const session: Session = res.locals.session;
-        console.log(session);
         if (!session) {
             return this.sendForbiddenResponse(res);
-        } else if (session.userRole !== "admin") {
+        } else if (session.userRole !== UserRole.Admin) {
             return this.sendUnauthorizedResponse(res);
-        } else{
+        } else {
             next()
         }
     };
 
     public sendUnauthorizedResponse = (res: Response): any => {
-        return res.status(401).json({
+        return res.status(HttpStatusCode.UNAUTHORIZED).json({
             error: "Unauthorized",
         });
     };
 
     public sendForbiddenResponse = (res: Response): any => {
-        return res.status(403).json({
+        return res.status(HttpStatusCode.FORBIDDEN).json({
             error: "Forbidden",
         });
     };

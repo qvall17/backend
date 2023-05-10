@@ -13,13 +13,13 @@ export class SequelizePolicyRepository implements IPolicyRepository {
 
     async findByClientId(clientId: string): Promise<Policy[]> {
         const policyModels = await PolicyModel.findAll({
-            where: { clientId: clientId }
+            where: { clientId }
         });
         if (!policies) return null;
         return policyModels.map(this.transformModelToEntity);
     }
 
-    async seed(): Promise<void> {
+    seed(): void {
         policies.forEach((policy) => {
             const policyModel = new PolicyModel(policy);
             policyModel.save();

@@ -10,7 +10,6 @@
     "test": "echo \"Error: no test specified\"",
     "lint": "eslint . --ext .ts,.json --max-warnings 0",
     "lint-and-fix": "eslint . --ext .ts,.json --fix",
-    "prettier-format": "prettier --config .prettierrc '**/*.{json,ts}' --write",
     "db:generate-migration": "sequelize-ts create --models-path=./src/infrastructure/persistence/sequelize.ts --name",
     "db:migrate": "env-cmd ts-node ./migrations/scripts/migrate.ts"
   },

@@ -1,5 +1,6 @@
 import { IUserRepository } from "../repository/IUserRepository";
 import { User } from "../entity/User";
+import { HttpStatusCode, RestError } from "../../utils/error";
 
 export class UserUseCase {
     constructor(private readonly userRepository: IUserRepository) {}
@@ -9,7 +10,9 @@ export class UserUseCase {
      * @param id
      */
     async findById(id: string): Promise<User> {
-        return this.userRepository.findById(id);
+        const user = await this.userRepository.findById(id);
+        if (!user) throw new RestError("User not found", HttpStatusCode.NOT_FOUND);
+        return user;
     }
 
     /**
@@ -17,7 +20,9 @@ export class UserUseCase {
      * @param email
      */
     async findByEmail(email: string): Promise<User> {
-        return this.userRepository.findByEmail(email);
+        const user = await this.userRepository.findByEmail(email);
+        if (user) return user;
+        else throw new RestError("User not found", HttpStatusCode.NOT_FOUND);
     }
 
     /**
@@ -26,30 +31,33 @@ export class UserUseCase {
      * @param plainPassword
      */
     async checkUserMatchPassword(email: string, plainPassword: string): Promise<boolean> {
-        const user: User = await this.userRepository.findByEmail(email);
-        return this.userRepository.matchPasswordForUser(user, plainPassword);
+        const user = await this.userRepository.findByEmail(email);
+        if (user) return this.userRepository.matchPasswordForUser(user, plainPassword);
+        else throw new RestError("User not found", HttpStatusCode.NOT_FOUND);
     }
 
     /**
-     * Find by username
-     * @param username
+     * Find by name
+     * @param name
      */
-    async findByUsername(username: string): Promise<User> {
-        return this.userRepository.findByUsername(username);
+    async findByName(name: string): Promise<User> {
+        const user = await this.userRepository.findByName(name);
+        if (user) return user;
+        else throw new RestError("User not found", HttpStatusCode.NOT_FOUND);
     }
 
     /**
      * Change password to user
-     * @param email
+     * @param id
      * @param newPassword
      */
-    async changePassword(email: string, newPassword: string): Promise<void> {
-        return this.userRepository.changePassword(email, newPassword);
+    async changePassword(id: string, newPassword: string): Promise<void> {
+        return this.userRepository.changePassword(id, newPassword);
     }
     /**
      * SEED
      */
-    async seed(): Promise<void> {
+    seed(): void {
         return this.userRepository.seed();
     }
 

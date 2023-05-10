@@ -1,6 +1,6 @@
 import { Request } from "express";
-import { RestError } from "../../../utils/error";
-import { isEmailValid } from "../../../utils/validator";
+import { HttpStatusCode, RestError } from "../../../utils/error";
+import { isEmailValid, isPasswordValid } from "../../../utils/validator";
 
 export class LoginRequest {
     public password: string;
@@ -8,7 +8,7 @@ export class LoginRequest {
 
     constructor(request: Request) {
         const { password, email } = request.body;
-        this.password = password;
+        this.fillPassword(password);
         this.fillEmail(email);
     }
 
@@ -16,7 +16,15 @@ export class LoginRequest {
      * @param email
      */
     protected fillEmail(email: string): void {
-        if (!isEmailValid(email)) throw new RestError("Invalid email", 400);
+        if (!isEmailValid(email)) throw new RestError("Invalid email", HttpStatusCode.BAD_REQUEST);
         this.email = email;
+    }
+
+    /**
+     * @param password
+     */
+    protected fillPassword(password: string): void {
+        if(!isPasswordValid(password)) throw new RestError("Invalid password", HttpStatusCode.BAD_REQUEST);
+        this.password = password;
     }
 }
