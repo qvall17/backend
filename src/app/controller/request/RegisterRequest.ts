@@ -1,6 +1,7 @@
 import { Request } from "express";
-import { HttpStatusCode, RestError } from "../../../utils/error";
+import { RestError } from "../../../utils/error";
 import { isEmailValid, isPasswordValid } from "../../../utils/validator";
+import { HttpStatusCode } from "../../../utils/HttpStatusCode";
 
 export class RegisterRequest {
     public newPassword: string;

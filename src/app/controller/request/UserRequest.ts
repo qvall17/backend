@@ -1,5 +1,6 @@
 import { Request } from "express";
-import { HttpStatusCode, RestError } from "../../../utils/error";
+import { RestError } from "../../../utils/error";
+import { HttpStatusCode } from "../../../utils/HttpStatusCode";
 
 export class UserRequest {
     public id?: string;

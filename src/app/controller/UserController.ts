@@ -5,8 +5,9 @@ import { RegisterRequest } from "./request/RegisterRequest";
 import { LoginRequest } from "./request/LoginRequest";
 import { SessionMiddleware } from "../middleware/SessionMiddleware";
 import { tryCatch } from "../../utils/tryCatch";
-import { HttpStatusCode, RestError } from "../../utils/error";
+import { RestError } from "../../utils/error";
 import { UserRequest } from "./request/UserRequest";
+import { HttpStatusCode } from "../../utils/HttpStatusCode";
 
 enum Routes {
     GET = "/",
@@ -102,7 +103,7 @@ export class UserController extends BaseController {
                 token: token,
             });
         } else {
-            throw new RestError("Invalid name or password", HttpStatusCode.BAD_REQUEST);
+            throw new RestError("Invalid email or password", HttpStatusCode.BAD_REQUEST);
         }
     };
 

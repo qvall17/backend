@@ -14,7 +14,7 @@ export class SequelizeUserRepository implements IUserRepository {
     async changePassword(id: string, newPassword: string): Promise<void> {
         const userModel: UserModel = await UserModel.findByPk(id);
         userModel.password = newPassword;
-        userModel.save();
+        await userModel.save();
     }
 
     async matchPasswordForUser(user: User, plainPassword: string): Promise<boolean> {

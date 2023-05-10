@@ -1,12 +1,6 @@
 import { Response } from "express";
+import { HttpStatusCode } from "./HttpStatusCode";
 
-export enum HttpStatusCode {
-    BAD_REQUEST = 400,
-    UNAUTHORIZED = 401,
-    FORBIDDEN = 403,
-    NOT_FOUND = 404,
-    INTERNAL_SERVER = 500,
-}
 export class RestError extends Error {
     public code?: HttpStatusCode;
 
@@ -22,6 +16,6 @@ export class RestError extends Error {
             return res.status(err.code || 417).json({ message: err.message });
         }
         console.error("[500] Internal error", { message: err });
-        return res.status(500).json({ message: "Internal error" });
+        return res.status(HttpStatusCode.INTERNAL_SERVER).json({ message: "Internal error" });
     }
 }

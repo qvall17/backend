@@ -56,7 +56,7 @@
   "tags": [
     {
       "name": "User",
-      "description": "Client users in the system"
+      "description": "Users in the system"
     },
     {
       "name": "Policy",
@@ -97,7 +97,7 @@
             "in": "query",
             "name": "id",
             "type": "string",
-            "description": "id of the you want to find"
+            "description": "user id"
           }
         ],
         "responses": {
