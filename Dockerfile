@@ -1,8 +1,7 @@
-FROM node:10
-# ENV NODE_ENV=production
+FROM node:16
 
 RUN apt-get update && \
-    apt-get -y install libbcprov-java libcommons-lang3-java default-jre-headless pdftk && \
+    apt-get -y install && \
     apt-get clean
 
 WORKDIR /app
