@@ -8,6 +8,7 @@ import { Router } from "express";
 import { ApiControllers, SessionMiddleware } from "./src/app";
 import * as swaggerDocument from "./swagger.json";
 import swaggerUi from "swagger-ui-express";
+import { HttpStatusCode } from "./src/utils/HttpStatusCode";
 
 const server = express();
 
@@ -21,16 +22,7 @@ export const run = async (): Promise<void> => {
     server.use(cookieParser());
 
     /** Setup middlewares **/
-    server.use(
-        helmet({
-            contentSecurityPolicy: false,
-        }),
-    );
-    server.use((req, res, next) => {
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Headers", "*");
-        next();
-    });
+    server.use(helmet());
     server.use(SessionMiddleware.session);
 
     /** Setup controllers **/
@@ -41,11 +33,11 @@ export const run = async (): Promise<void> => {
 
     /** Not found and server error control **/
     server.use((req, res) => {
-        res.status(404).json({ error: "Not found" });
+        res.status(HttpStatusCode.NOT_FOUND).json({ error: "Not found" });
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     server.use((error, req, res, next) => {
-        res.status(500).json({ error: "Internal server error" });
+        res.status(HttpStatusCode.INTERNAL_SERVER).json({ error: "Internal server error" });
     });
 
     http.createServer(server).listen(8080, () => {
